@@ -138,15 +138,15 @@
 
   function realizarAccion(tipo) {
     if (tipo === 'trabajo') {
-      estado.trabajo += 10;
-      estado.dinero += 15;
-      ganarExperiencia(20);
+      estado.trabajo += 5;
+      estado.dinero += 5;
+      ganarExperiencia(2);
     } else if (tipo === 'amigo') {
       estado.amigos += 1;
-      ganarExperiencia(10);
+      ganarExperiencia(1);
     } else if (tipo === 'titulo') {
       estado.titulos += 1;
-      ganarExperiencia(30);
+      ganarExperiencia(10);
     }
     verificarLogros();
     actualizarUI();
