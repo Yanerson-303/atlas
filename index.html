@@ -2,106 +2,133 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mi Vida MMORPG</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <style>
-    * {
-      color: #ffffff;
+    /* Estilos adicionales si los necesitas */
+    .stat-card {
+      background-color: #2c3e50;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-
-    body {
-      background: #211e2f;
-      color: #fff;
+    .progress {
+      height: 25px;
     }
-
-    .card {
-      background-color: #293b42;
-      border: none;
+    .btn-action {
+      margin: 5px;
+      min-width: 120px;
     }
-
-    .progress-bar {
-      transition: width 0.6s ease;
+    .health-bar {
+      background-color: #e74c3c;
     }
-
-    #avatar {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #ffc107;
+    .xp-bar {
+      background-color: #3498db;
     }
   </style>
 </head>
-<body>
-
+<body class="bg-dark text-white">
   <main class="container py-5">
     <h1 class="text-center text-warning mb-4">🎮 Mi Vida MMORPG</h1>
-
-    <!-- Avatar y carga de imagen -->
-    <div class="text-center mb-4">
-      <img id="avatar" src="https://via.placeholder.com/100" alt="Avatar">
-      <div class="mt-2">
-        <input type="file" accept="image/*" onchange="cambiarAvatar(this)">
+    
+    <!-- Contenedor para el componente de avatar -->
+    <div id="avatarContainer" class="text-center mb-5">
+      <!-- Avatar por defecto si falla la carga -->
+      <div id="defaultAvatar" class="border p-3 rounded" style="max-width: 200px; margin: 0 auto;">
+        <img src="https://via.placeholder.com/150" alt="Avatar" class="img-fluid mb-2" id="avatarImage">
+        <button id="changeAvatarBtn" class="btn btn-sm btn-outline-light">Cambiar Avatar</button>
       </div>
     </div>
-
-    <!-- Estadísticas y nivel -->
-    <div class="row g-4">
+    
+    <!-- Sección de estadísticas del personaje -->
+    <div class="row">
       <div class="col-md-6">
-        <div class="card p-3">
-          <h4>Estadísticas</h4>
-          <p>💼 Trabajo: <span id="trabajo">0</span> pts</p>
-          <p>💰 Dinero: <span id="dinero">0</span> pts</p>
-          <p>🎓 Títulos: <span id="titulos">0</span></p>
-          <p>🧠 Experiencia: <span id="experiencia">0</span> XP</p>
-          <p>🤝 Amigos: <span id="amigos">0</span></p>
-          <p>❤️ Salud: <span id="salud">100</span> pts</p>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card p-3">
-          <h4>📈 Nivel</h4>
-          <p>Nivel actual: <span id="nivel">1</span></p>
+        <div class="stat-card">
+          <h3 class="text-info">Nivel <span id="nivelDisplay" class="badge bg-primary">1</span></h3>
           <div class="progress mb-3">
-            <div id="barraXP" class="progress-bar bg-success" role="progressbar" style="width: 0%">0%</div>
+            <div id="xpBar" class="progress-bar xp-bar" role="progressbar" style="width: 0%"></div>
           </div>
-          <button class="btn btn-warning w-100" onclick="ganarExperiencia(25)">+25 XP</button>
+          <p>Experiencia: <span id="xpDisplay">0</span>/100</p>
+        </div>
+        
+        <div class="stat-card">
+          <h3 class="text-info">Salud</h3>
+          <div class="progress mb-3">
+            <div id="healthBar" class="progress-bar health-bar" role="progressbar" style="width: 100%"></div>
+          </div>
+          <p>Salud: <span id="healthDisplay">100</span>/100</p>
+        </div>
+      </div>
+      
+      <div class="col-md-6">
+        <div class="stat-card">
+          <h3 class="text-info">Estadísticas</h3>
+          <ul class="list-group list-group-flush bg-transparent">
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Dinero
+              <span id="moneyDisplay" class="badge bg-success rounded-pill">0</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Trabajo
+              <span id="workDisplay" class="badge bg-warning rounded-pill">0</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Amigos
+              <span id="friendsDisplay" class="badge bg-info rounded-pill">0</span>
+            </li>
+            <li class="list-group-item bg-transparent text-white d-flex justify-content-between align-items-center">
+              Títulos
+              <span id="titlesDisplay" class="badge bg-danger rounded-pill">0</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
-
-    <!-- Logros -->
+    
+    <!-- Sección de acciones -->
     <div class="row mt-4">
-      <div class="col-md-12">
-        <div class="card p-3">
-          <h4>🏆 Logros Desbloqueados</h4>
-          <ul id="logros" class="mb-0"></ul>
+      <div class="col-12">
+        <h2 class="text-center text-warning mb-3">Acciones</h2>
+        <div class="d-flex flex-wrap justify-content-center">
+          <button id="workBtn" class="btn btn-primary btn-action">Trabajar</button>
+          <button id="trainBtn" class="btn btn-secondary btn-action">Entrenar</button>
+          <button id="socialBtn" class="btn btn-success btn-action">Socializar</button>
+          <button id="restBtn" class="btn btn-info btn-action">Descansar</button>
+          <button id="questBtn" class="btn btn-warning btn-action">Misión</button>
+          <button id="shopBtn" class="btn btn-danger btn-action">Tienda</button>
         </div>
       </div>
     </div>
-
-    <!-- Acciones -->
-    <div class="row mt-4 g-2">
-      <div class="col-sm-3">
-        <button class="btn btn-outline-light w-100" onclick="realizarAccion('trabajo')">Ir al trabajo</button>
+    
+    <!-- Sección de logros -->
+    <div class="row mt-5">
+      <div class="col-12">
+        <h2 class="text-center text-warning mb-3">Logros</h2>
+        <div id="achievementsList" class="d-flex flex-wrap justify-content-center">
+          <!-- Los logros se agregarán dinámicamente aquí -->
+          <div class="alert alert-dark m-2">Aún no hay logros desbloqueados</div>
+        </div>
       </div>
-      <div class="col-sm-3">
-        <button class="btn btn-outline-light w-100" onclick="realizarAccion('amigo')">Hacer un nuevo amigo</button>
-      </div>
-      <div class="col-sm-3">
-        <button class="btn btn-outline-light w-100" onclick="realizarAccion('titulo')">Ganar un título</button>
-      </div>
-      <div class="col-sm-3">
-        <button class="btn btn-outline-light w-100" onclick="realizarAccion('ejercicio')">Hacer ejercicio</button>
+    </div>
+    
+    <!-- Consola de eventos -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <h2 class="text-center text-warning mb-3">Eventos</h2>
+        <div id="eventLog" class="bg-black p-3 rounded" style="height: 200px; overflow-y: auto;">
+          <p class="text-muted">Bienvenido a tu vida MMORPG...</p>
+        </div>
       </div>
     </div>
   </main>
 
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // Estado inicial o cargado desde localStorage
-    let estado = JSON.parse(localStorage.getItem('vidaMMO')) || {
+    // Estado inicial completo del juego
+    const initialState = {
       trabajo: 0,
       dinero: 0,
       titulos: 0,
@@ -110,115 +137,286 @@
       salud: 100,
       nivel: 1,
       logros: [],
-      avatar: ""
+      avatar: localStorage.getItem('avatarImage') || "https://via.placeholder.com/150",
+      xpNecesaria: 100,
+      ultimosEventos: ["Bienvenido a tu vida MMORPG..."]
     };
 
-    // Guardar estado en localStorage
-    function guardarEstado() {
-      localStorage.setItem('vidaMMO', JSON.stringify(estado));
-    }
-
-    // Actualizar elementos en pantalla
-    function actualizarUI() {
-      document.getElementById('trabajo').textContent = estado.trabajo;
-      document.getElementById('dinero').textContent = estado.dinero;
-      document.getElementById('titulos').textContent = estado.titulos;
-      document.getElementById('experiencia').textContent = estado.experiencia;
-      document.getElementById('amigos').textContent = estado.amigos;
-      document.getElementById('nivel').textContent = estado.nivel;
-      document.getElementById('salud').textContent = estado.salud;
-
-      // Barra de experiencia
-      const porcentaje = Math.min((estado.experiencia % 100), 100);
-      const barra = document.getElementById('barraXP');
-      barra.style.width = porcentaje + '%';
-      barra.textContent = porcentaje + '%';
-
-      mostrarLogros();
-
-      // Cargar avatar si hay
-      if (estado.avatar) {
-        document.getElementById('avatar').src = estado.avatar;
+    // Función para cargar el estado del juego
+    function loadGameState() {
+      const savedState = localStorage.getItem('vidaMMO');
+      if (savedState) {
+        const parsedState = JSON.parse(savedState);
+        // Asegurarse de que todos los campos necesarios existan
+        return {...initialState, ...parsedState};
       }
+      return {...initialState};
     }
 
-    // Ganar experiencia y subir de nivel
-    function ganarExperiencia(cantidad) {
-      estado.experiencia += cantidad;
-      if (estado.experiencia >= estado.nivel * 100) {
-        estado.nivel++;
-        estado.logros.push(`Subiste al nivel ${estado.nivel}!`);
+    // Función para guardar el estado del juego
+    function saveGameState(state) {
+      localStorage.setItem('vidaMMO', JSON.stringify(state));
+    }
+
+    // Función para actualizar la interfaz de usuario
+    function updateUI(state) {
+      // Actualizar estadísticas
+      document.getElementById('nivelDisplay').textContent = state.nivel;
+      document.getElementById('xpDisplay').textContent = `${state.experiencia}/${state.xpNecesaria}`;
+      document.getElementById('xpBar').style.width = `${(state.experiencia / state.xpNecesaria) * 100}%`;
+      document.getElementById('healthDisplay').textContent = state.salud;
+      document.getElementById('healthBar').style.width = `${state.salud}%`;
+      document.getElementById('moneyDisplay').textContent = state.dinero;
+      document.getElementById('workDisplay').textContent = state.trabajo;
+      document.getElementById('friendsDisplay').textContent = state.amigos;
+      document.getElementById('titlesDisplay').textContent = state.titulos;
+      
+      // Actualizar avatar
+      const avatarImg = document.getElementById('avatarImage');
+      if (avatarImg) {
+        avatarImg.src = state.avatar;
       }
-      verificarLogros();
-      actualizarUI();
-      guardarEstado();
-    }
-
-    // Realizar acciones: trabajo, amigo, título, ejercicio
-    function realizarAccion(tipo) {
-      if (tipo === 'trabajo') {
-        estado.trabajo += 5;
-        estado.dinero += 5;
-        ganarExperiencia(2);
-      } else if (tipo === 'amigo') {
-        estado.amigos += 1;
-        ganarExperiencia(1);
-      } else if (tipo === 'titulo') {
-        estado.titulos += 1;
-        ganarExperiencia(10);
-      } else if (tipo === 'ejercicio') {
-        estado.salud = Math.min(estado.salud + 5, 100); // salud máxima 100
-        ganarExperiencia(3);
+      
+      // Actualizar logros
+      const achievementsList = document.getElementById('achievementsList');
+      if (state.logros.length > 0) {
+        achievementsList.innerHTML = '';
+        state.logros.forEach(logro => {
+          const achievementElement = document.createElement('div');
+          achievementElement.className = 'alert alert-success m-2';
+          achievementElement.textContent = logro;
+          achievementsList.appendChild(achievementElement);
+        });
+      } else {
+        achievementsList.innerHTML = '<div class="alert alert-dark m-2">Aún no hay logros desbloqueados</div>';
       }
-      verificarLogros();
-      actualizarUI();
-      guardarEstado();
-    }
-
-    // Mostrar los últimos logros
-    function mostrarLogros() {
-      const lista = document.getElementById('logros');
-      lista.innerHTML = '';
-      estado.logros.slice(-5).forEach(l => {
-        const li = document.createElement('li');
-        li.textContent = '✅ ' + l;
-        lista.appendChild(li);
+      
+      // Actualizar eventos
+      const eventLog = document.getElementById('eventLog');
+      eventLog.innerHTML = '';
+      state.ultimosEventos.forEach(evento => {
+        const eventElement = document.createElement('p');
+        eventElement.textContent = evento;
+        eventLog.appendChild(eventElement);
       });
+      eventLog.scrollTop = eventLog.scrollHeight;
     }
 
-    // Verificar si se desbloquean nuevos logros
-    function verificarLogros() {
-      if (estado.dinero >= 100 && !estado.logros.includes("💰 Primeros 100 ganados")) {
-        estado.logros.push("💰 Primeros 100 ganados");
+    // Función para agregar un nuevo evento
+    function addEvent(state, message) {
+      state.ultimosEventos.push(message);
+      if (state.ultimosEventos.length > 10) {
+        state.ultimosEventos.shift();
       }
-      if (estado.amigos >= 3 && !estado.logros.includes("🤝 Socializador")) {
-        estado.logros.push("🤝 Socializador");
-      }
-      if (estado.titulos >= 2 && !estado.logros.includes("🎓 Coleccionista de títulos")) {
-        estado.logros.push("🎓 Coleccionista de títulos");
-      }
-      if (estado.salud >= 100 && !estado.logros.includes("💪 Salud Perfecta")) {
-        estado.logros.push("💪 Salud Perfecta");
-      }
-      guardarEstado();
+      updateUI(state);
     }
 
-    // Cambiar avatar por imagen subida
-    function cambiarAvatar(input) {
-      const file = input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        estado.avatar = e.target.result;
-        document.getElementById('avatar').src = estado.avatar;
-        guardarEstado();
-      };
-      reader.readAsDataURL(file);
+    // Funciones de las acciones del juego
+    function workAction(state) {
+      const earnings = 10 + (state.trabajo * 2);
+      state.dinero += earnings;
+      state.trabajo += 1;
+      state.salud = Math.max(state.salud - 5, 0);
+      addEvent(state, `Trabajaste y ganaste $${earnings}.`);
+      
+      // Posibilidad de logro
+      if (state.trabajo === 10 && !state.logros.includes("Trabajador incansable (10 trabajos)")) {
+        state.logros.push("Trabajador incansable (10 trabajos)");
+        addEvent(state, "¡Logro desbloqueado: Trabajador incansable!");
+      }
+      
+      return state;
     }
 
-    // Al cargar la página
-    actualizarUI();
+    function trainAction(state) {
+      const xpGained = 15 + Math.floor(Math.random() * 10);
+      state.experiencia += xpGained;
+      state.salud = Math.max(state.salud - 10, 0);
+      addEvent(state, `Entrenaste y ganaste ${xpGained} XP.`);
+      
+      // Subir de nivel
+      if (state.experiencia >= state.xpNecesaria) {
+        state.nivel += 1;
+        state.experiencia = state.experiencia - state.xpNecesaria;
+        state.xpNecesaria = Math.floor(state.xpNecesaria * 1.5);
+        state.salud = 100;
+        addEvent(state, `¡Subiste al nivel ${state.nivel}!`);
+        
+        // Logro por nivel
+        if (state.nivel % 5 === 0 && !state.logros.includes(`Nivel ${state.nivel} alcanzado`)) {
+          state.logros.push(`Nivel ${state.nivel} alcanzado`);
+          addEvent(state, `¡Logro desbloqueado: Nivel ${state.nivel}!`);
+        }
+      }
+      
+      return state;
+    }
+
+    function socialAction(state) {
+      const newFriends = Math.floor(Math.random() * 2) + 1;
+      state.amigos += newFriends;
+      state.salud = Math.min(state.salud + 5, 100);
+      addEvent(state, `Socializaste y hiciste ${newFriends} nuevo(s) amigo(s).`);
+      
+      // Posibilidad de logro
+      if (state.amigos >= 20 && !state.logros.includes("Popular (20 amigos)")) {
+        state.logros.push("Popular (20 amigos)");
+        addEvent(state, "¡Logro desbloqueado: Popular!");
+      }
+      
+      return state;
+    }
+
+    function restAction(state) {
+      const healthRecovered = 30 + Math.floor(Math.random() * 20);
+      state.salud = Math.min(state.salud + healthRecovered, 100);
+      addEvent(state, `Descansaste y recuperaste ${healthRecovered} de salud.`);
+      return state;
+    }
+
+    function questAction(state) {
+      if (state.salud < 30) {
+        addEvent(state, "Estás demasiado débil para ir de misión. Descansa primero.");
+        return state;
+      }
+      
+      const success = Math.random() > 0.3;
+      if (success) {
+        const reward = 25 + Math.floor(Math.random() * 50);
+        const xp = 30 + Math.floor(Math.random() * 20);
+        state.dinero += reward;
+        state.experiencia += xp;
+        state.salud = Math.max(state.salud - 25, 0);
+        state.titulos += 1;
+        addEvent(state, `¡Misión completada! Ganaste $${reward} y ${xp} XP.`);
+        
+        // Logro por misiones
+        if (state.titulos === 5 && !state.logros.includes("Aventurero (5 misiones)")) {
+          state.logros.push("Aventurero (5 misiones)");
+          addEvent(state, "¡Logro desbloqueado: Aventurero!");
+        }
+      } else {
+        state.salud = Math.max(state.salud - 15, 0);
+        addEvent(state, "¡Misión fallida! Perdiste salud.");
+      }
+      
+      return state;
+    }
+
+    function shopAction(state) {
+      if (state.dinero < 50) {
+        addEvent(state, "No tienes suficiente dinero (necesitas al menos $50).");
+        return state;
+      }
+      
+      state.dinero -= 50;
+      const boost = Math.floor(Math.random() * 3) + 1;
+      
+      switch(boost) {
+        case 1:
+          state.salud = 100;
+          addEvent(state, "Compraste una poción de salud completa por $50.");
+          break;
+        case 2:
+          state.experiencia += 50;
+          addEvent(state, "Comprare un libro de conocimiento por $50 (+50 XP).");
+          break;
+        case 3:
+          state.amigos += 3;
+          addEvent(state, "Compraste regalos para hacer 3 nuevos amigos por $50.");
+          break;
+      }
+      
+      return state;
+    }
+// Función para manejar el cambio de avatar desde archivo local
+function setupAvatarChange() {
+  const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+  if (changeAvatarBtn) {
+    changeAvatarBtn.addEventListener('click', function() {
+      // Crear un input de tipo file dinámicamente
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*'; // Aceptar solo archivos de imagen
+      
+      // Manejar la selección de archivo
+      fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          
+          reader.onload = function(event) {
+            const newAvatarUrl = event.target.result;
+            const avatarImg = document.getElementById('avatarImage');
+            
+            if (avatarImg) {
+              avatarImg.src = newAvatarUrl;
+              if (window.estado) {
+                window.estado.avatar = newAvatarUrl;
+                saveGameState(window.estado);
+              }
+              localStorage.setItem('avatarImage', newAvatarUrl);
+              addEvent(window.estado, "¡Has cambiado tu avatar!");
+            }
+          };
+          
+          reader.readAsDataURL(file); // Leer el archivo como URL de datos
+        }
+      });
+      
+      fileInput.click(); // Simular click en el input file
+    });
+  }
+}
+
+    // Inicializar la aplicación
+    document.addEventListener('DOMContentLoaded', function() {
+      // Cargar estado del juego
+      window.estado = loadGameState();
+      
+      // Configurar event listeners para los botones
+      document.getElementById('workBtn').addEventListener('click', function() {
+        window.estado = workAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      document.getElementById('trainBtn').addEventListener('click', function() {
+        window.estado = trainAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      document.getElementById('socialBtn').addEventListener('click', function() {
+        window.estado = socialAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      document.getElementById('restBtn').addEventListener('click', function() {
+        window.estado = restAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      document.getElementById('questBtn').addEventListener('click', function() {
+        window.estado = questAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      document.getElementById('shopBtn').addEventListener('click', function() {
+        window.estado = shopAction(window.estado);
+        saveGameState(window.estado);
+        updateUI(window.estado);
+      });
+      
+      // Configurar el cambio de avatar
+      setupAvatarChange();
+      
+      // Actualizar la UI con el estado inicial
+      updateUI(window.estado);
+    });
   </script>
-
 </body>
 </html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Componente de Avatar</title>
+  <style>
+    .avatar-component {
+      text-align: center;
+      margin: 20px auto;
+      max-width: 300px;
+    }
+    .avatar-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ffc107;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+    .avatar-img:hover {
+      transform: scale(1.05);
+      border-color: #ffab00;
+    }
+    .avatar-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      background: #212529;
+      color: #ffc107;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
+    .avatar-btn:hover {
+      background: #ffc107;
+      color: #212529;
+    }
+    .avatar-input {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="avatar-component">
+  <img class="avatar-img" src="https://via.placeholder.com/150" alt="Avatar del usuario">
+  <label class="avatar-btn">
+    Cambiar avatar
+    <input type="file" accept="image/*" class="avatar-input">
+  </label>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Configuración del componente de avatar
+  const avatarComponent = document.querySelector('.avatar-component');
+  const avatarImg = avatarComponent.querySelector('.avatar-img');
+  const avatarInput = avatarComponent.querySelector('.avatar-input');
+  
+  // Cargar avatar guardado si existe en localStorage
+  const savedAvatar = localStorage.getItem('userAvatar');
+  if (savedAvatar) {
+    avatarImg.src = savedAvatar;
+  }
+  
+  // Hacer la imagen clickeable
+  avatarImg.addEventListener('click', () => avatarInput.click());
+  
+  // Manejar cambio de imagen
+  avatarInput.addEventListener('change', function(e) {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Validar tipo y tamaño del archivo (máximo 2MB)
+      if (!file.type.match('image.*')) {
+        alert('Por favor, selecciona un archivo de imagen válido.');
+        return;
+      }
+      
+      if (file.size > 2 * 1024 * 1024) {
+        alert('La imagen no debe superar los 2MB.');
+        return;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(event) {
+        // Actualizar la imagen
+        avatarImg.src = event.target.result;
+        
+        // Guardar en localStorage
+        localStorage.setItem('userAvatar', event.target.result);
+        
+        // Disparar evento personalizado
+        document.dispatchEvent(new CustomEvent('avatarChanged', {
+          detail: {
+            imageUrl: event.target.result,
+            timestamp: new Date().toISOString()
+          }
+        }));
+      };
+      
+      reader.onerror = function() {
+        console.error('Error al leer el archivo');
+      };
+      
+      reader.readAsDataURL(file);
+    }
+  });
+  
+  // Evento para resetear el avatar
+  document.addEventListener('resetAvatar', function() {
+    avatarImg.src = 'https://via.placeholder.com/150';
+    localStorage.removeItem('userAvatar');
+  });
+});
+</script>
+
+</body>
+</html>
