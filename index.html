@@ -1,107 +1,224 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Mi Vida MMORPG</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    * {
+      color: #ffffff;
+    }
 
-  <!-- Bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    body {
+      background: #211e2f;
+      color: #fff;
+    }
 
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="cluster/styles/home.css" />
+    .card {
+      background-color: #293b42;
+      border: none;
+    }
+
+    .progress-bar {
+      transition: width 0.6s ease;
+    }
+
+    #avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #ffc107;
+    }
+  </style>
 </head>
-<body class="bg-dark text-white">
+<body>
 
-  <!-- Encabezado -->
-  <header class="text-center py-4">
-    <h1 class="text-warning display-5">🎮 Mi Vida MMORPG</h1>
-    <p class="lead text-secondary">Convierte tu vida en una aventura</p>
-  </header>
+  <main class="container py-5">
+    <h1 class="text-center text-warning mb-4">🎮 Mi Vida MMORPG</h1>
 
-  <main class="container">
-
-    <!-- Avatar y estado general -->
-    <section id="perfil" class="text-center mb-5">
-      <img id="avatar" src="https://via.placeholder.com/100" alt="Avatar" class="rounded-circle border border-warning" />
+    <!-- Avatar y carga de imagen -->
+    <div class="text-center mb-4">
+      <img id="avatar" src="https://via.placeholder.com/100" alt="Avatar">
       <div class="mt-2">
-        <input type="file" accept="image/*" onchange="cambiarAvatar(this)" />
+        <input type="file" accept="image/*" onchange="cambiarAvatar(this)">
       </div>
-      <p class="mt-3">Nivel <span id="nivel">1</span> | XP: <span id="experiencia">0</span></p>
-      <div class="progress" style="height: 20px;">
-        <div id="barraXP" class="progress-bar bg-success" style="width: 0%;">0%</div>
-      </div>
-    </section>
+    </div>
 
-    <!-- Estadísticas -->
-    <section id="estadisticas" class="mb-4 row g-4">
+    <!-- Estadísticas y nivel -->
+    <div class="row g-4">
       <div class="col-md-6">
         <div class="card p-3">
-          <h4>📊 Estadísticas</h4>
-          <ul class="list-group list-group-flush">
-            <li class="list-group-item bg-transparent text-white">💼 Trabajo: <span id="trabajo">0</span></li>
-            <li class="list-group-item bg-transparent text-white">💰 Dinero: <span id="dinero">0</span> COP</li>
-            <li class="list-group-item bg-transparent text-white">🎓 Títulos: <span id="titulos">0</span></li>
-            <li class="list-group-item bg-transparent text-white">🤝 Amigos: <span id="amigos">0</span></li>
-            <li class="list-group-item bg-transparent text-white">❤️ Salud: <span id="salud">100</span></li>
-            <li class="list-group-item bg-transparent text-white">⭐ Reputación: <span id="reputacion">Neutro</span></li>
-          </ul>
+          <h4>Estadísticas</h4>
+          <p>💼 Trabajo: <span id="trabajo">0</span> pts</p>
+          <p>💰 Dinero: <span id="dinero">0</span> pts</p>
+          <p>🎓 Títulos: <span id="titulos">0</span></p>
+          <p>🧠 Experiencia: <span id="experiencia">0</span> XP</p>
+          <p>🤝 Amigos: <span id="amigos">0</span></p>
+          <p>❤️ Salud: <span id="salud">100</span> pts</p>
         </div>
       </div>
 
-      <!-- Inventario -->
       <div class="col-md-6">
         <div class="card p-3">
-          <h4>🎒 Inventario</h4>
-          <ul id="inventario" class="list-group list-group-flush text-white"></ul>
+          <h4>📈 Nivel</h4>
+          <p>Nivel actual: <span id="nivel">1</span></p>
+          <div class="progress mb-3">
+            <div id="barraXP" class="progress-bar bg-success" role="progressbar" style="width: 0%">0%</div>
+          </div>
+          <button class="btn btn-warning w-100" onclick="ganarExperiencia(25)">+25 XP</button>
         </div>
       </div>
-    </section>
-
-    <!-- Acciones -->
-    <section id="acciones" class="mb-4">
-      <div class="card p-3">
-        <h4>🎯 Acciones</h4>
-        <div class="row g-2">
-          <div class="col-sm-3"><button class="btn btn-outline-light w-100" onclick="realizarAccion('trabajo')">Ir al trabajo</button></div>
-          <div class="col-sm-3"><button class="btn btn-outline-light w-100" onclick="realizarAccion('amigo')">Hacer amigo</button></div>
-          <div class="col-sm-3"><button class="btn btn-outline-light w-100" onclick="realizarAccion('titulo')">Ganar título</button></div>
-          <div class="col-sm-3"><button class="btn btn-outline-light w-100" onclick="realizarAccion('ejercicio')">Hacer ejercicio</button></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Misiones -->
-    <section id="misiones" class="mb-4">
-      <div class="card p-3">
-        <h4>📅 Misiones Diarias</h4>
-        <ul id="listaMisiones" class="list-group text-white"></ul>
-      </div>
-    </section>
-
-    <!-- Árbol de habilidades -->
-    <section id="skillTree" class="mb-4">
-      <div class="card p-3">
-        <h4>🌲 Árbol de Habilidades</h4>
-        <div id="habilidades" class="row g-2"></div>
-      </div>
-    </section>
+    </div>
 
     <!-- Logros -->
-    <section id="logros" class="mb-4">
-      <div class="card p-3">
-        <h4>🏆 Logros Desbloqueados</h4>
-        <ul id="listaLogros" class="text-white"></ul>
+    <div class="row mt-4">
+      <div class="col-md-12">
+        <div class="card p-3">
+          <h4>🏆 Logros Desbloqueados</h4>
+          <ul id="logros" class="mb-0"></ul>
+        </div>
       </div>
-    </section>
+    </div>
 
+    <!-- Acciones -->
+    <div class="row mt-4 g-2">
+      <div class="col-sm-3">
+        <button class="btn btn-outline-light w-100" onclick="realizarAccion('trabajo')">Ir al trabajo</button>
+      </div>
+      <div class="col-sm-3">
+        <button class="btn btn-outline-light w-100" onclick="realizarAccion('amigo')">Hacer un nuevo amigo</button>
+      </div>
+      <div class="col-sm-3">
+        <button class="btn btn-outline-light w-100" onclick="realizarAccion('titulo')">Ganar un título</button>
+      </div>
+      <div class="col-sm-3">
+        <button class="btn btn-outline-light w-100" onclick="realizarAccion('ejercicio')">Hacer ejercicio</button>
+      </div>
+    </div>
   </main>
 
-  <!-- Toast para notificaciones -->
-  <div class="toast-container position-fixed top-0 end-0 p-3"></div>
+  <script>
+    // Estado inicial o cargado desde localStorage
+    let estado = JSON.parse(localStorage.getItem('vidaMMO')) || {
+      trabajo: 0,
+      dinero: 0,
+      titulos: 0,
+      experiencia: 0,
+      amigos: 0,
+      salud: 100,
+      nivel: 1,
+      logros: [],
+      avatar: ""
+    };
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="cluster/json/home.js"></script>
+    // Guardar estado en localStorage
+    function guardarEstado() {
+      localStorage.setItem('vidaMMO', JSON.stringify(estado));
+    }
+
+    // Actualizar elementos en pantalla
+    function actualizarUI() {
+      document.getElementById('trabajo').textContent = estado.trabajo;
+      document.getElementById('dinero').textContent = estado.dinero;
+      document.getElementById('titulos').textContent = estado.titulos;
+      document.getElementById('experiencia').textContent = estado.experiencia;
+      document.getElementById('amigos').textContent = estado.amigos;
+      document.getElementById('nivel').textContent = estado.nivel;
+      document.getElementById('salud').textContent = estado.salud;
+
+      // Barra de experiencia
+      const porcentaje = Math.min((estado.experiencia % 100), 100);
+      const barra = document.getElementById('barraXP');
+      barra.style.width = porcentaje + '%';
+      barra.textContent = porcentaje + '%';
+
+      mostrarLogros();
+
+      // Cargar avatar si hay
+      if (estado.avatar) {
+        document.getElementById('avatar').src = estado.avatar;
+      }
+    }
+
+    // Ganar experiencia y subir de nivel
+    function ganarExperiencia(cantidad) {
+      estado.experiencia += cantidad;
+      if (estado.experiencia >= estado.nivel * 100) {
+        estado.nivel++;
+        estado.logros.push(`Subiste al nivel ${estado.nivel}!`);
+      }
+      verificarLogros();
+      actualizarUI();
+      guardarEstado();
+    }
+
+    // Realizar acciones: trabajo, amigo, título, ejercicio
+    function realizarAccion(tipo) {
+      if (tipo === 'trabajo') {
+        estado.trabajo += 5;
+        estado.dinero += 5;
+        ganarExperiencia(2);
+      } else if (tipo === 'amigo') {
+        estado.amigos += 1;
+        ganarExperiencia(1);
+      } else if (tipo === 'titulo') {
+        estado.titulos += 1;
+        ganarExperiencia(10);
+      } else if (tipo === 'ejercicio') {
+        estado.salud = Math.min(estado.salud + 5, 100); // salud máxima 100
+        ganarExperiencia(3);
+      }
+      verificarLogros();
+      actualizarUI();
+      guardarEstado();
+    }
+
+    // Mostrar los últimos logros
+    function mostrarLogros() {
+      const lista = document.getElementById('logros');
+      lista.innerHTML = '';
+      estado.logros.slice(-5).forEach(l => {
+        const li = document.createElement('li');
+        li.textContent = '✅ ' + l;
+        lista.appendChild(li);
+      });
+    }
+
+    // Verificar si se desbloquean nuevos logros
+    function verificarLogros() {
+      if (estado.dinero >= 100 && !estado.logros.includes("💰 Primeros 100 ganados")) {
+        estado.logros.push("💰 Primeros 100 ganados");
+      }
+      if (estado.amigos >= 3 && !estado.logros.includes("🤝 Socializador")) {
+        estado.logros.push("🤝 Socializador");
+      }
+      if (estado.titulos >= 2 && !estado.logros.includes("🎓 Coleccionista de títulos")) {
+        estado.logros.push("🎓 Coleccionista de títulos");
+      }
+      if (estado.salud >= 100 && !estado.logros.includes("💪 Salud Perfecta")) {
+        estado.logros.push("💪 Salud Perfecta");
+      }
+      guardarEstado();
+    }
+
+    // Cambiar avatar por imagen subida
+    function cambiarAvatar(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        estado.avatar = e.target.result;
+        document.getElementById('avatar').src = estado.avatar;
+        guardarEstado();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Al cargar la página
+    actualizarUI();
+  </script>
+
 </body>
 </html>
